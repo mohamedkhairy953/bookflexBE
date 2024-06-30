@@ -39,3 +39,10 @@ dependencies {
 tasks.register("stage") {
     dependsOn("installDist")
 }
+tasks.withType<Jar> {
+    manifest {
+        attributes["Main-Class"] = "com.khairy.bookflexbe.ApplicationKt"
+    }
+    from(configurations.runtimeClasspath.get().map { if (it.isDirectory) it else zipTree(it) })
+    duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+}
