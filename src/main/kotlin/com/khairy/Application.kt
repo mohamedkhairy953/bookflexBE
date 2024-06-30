@@ -19,7 +19,7 @@ fun main() {
         uploadsDir.mkdirs()
     }
 
-    embeddedServer(Netty, port = 8080) {
+    embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
         install(CallLogging)
         install(ContentNegotiation) {
             json(Json {

@@ -1,1 +1,1 @@
-web: java -jar build/libs/BookFlexBE.jar
+web: ./build/install/BookFlexBE/bin/ktor-get-started-sample
