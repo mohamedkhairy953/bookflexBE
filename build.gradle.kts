@@ -37,5 +37,5 @@ dependencies {
     implementation("software.amazon.awssdk:s3:2.17.89")
 }
 tasks.register("stage") {
-    dependsOn("build")
+    dependsOn("installDist")
 }
