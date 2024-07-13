@@ -32,6 +32,7 @@ fun main() {
             route("/s3"){
                 uploadEpub()
                 getEpub()
+                getAllEpub()
             }
         }
     }.start(wait = true)

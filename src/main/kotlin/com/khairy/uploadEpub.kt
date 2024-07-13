@@ -7,6 +7,7 @@ import io.ktor.server.request.*
 import io.ktor.server.response.*
 import io.ktor.server.routing.*
 import software.amazon.awssdk.services.s3.model.GetObjectRequest
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request
 import software.amazon.awssdk.services.s3.model.PutObjectRequest
 import software.amazon.awssdk.services.s3.model.S3Exception
 import java.io.File
@@ -73,5 +74,24 @@ fun Route.getEpub() {
             call.respondText("Missing file name", status = HttpStatusCode.BadRequest)
         }
     }
+}
+
+fun Route.getAllEpub() {
+    get("/epub/list") {
+            try {
+                // Retrieve from S3
+                val getRequest = ListObjectsV2Request.builder()
+                    .bucket(S3Config.BUCKET_NAME)
+                    .build()
+                val listResponse = S3Config.s3Client.listObjectsV2(getRequest)
+
+                call.respondOutputStream(contentType = ContentType.Application.OctetStream) {
+
+                }
+                call.respond(listResponse)
+            } catch (e: S3Exception) {
+                call.respondText("", status = HttpStatusCode.NotFound)
+            }
+        }
 }
 
