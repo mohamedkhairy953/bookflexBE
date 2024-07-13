@@ -84,10 +84,6 @@ fun Route.getAllEpub() {
                     .bucket(S3Config.BUCKET_NAME)
                     .build()
                 val listResponse = S3Config.s3Client.listObjectsV2(getRequest)
-
-                call.respondOutputStream(contentType = ContentType.Application.OctetStream) {
-
-                }
                 call.respond(listResponse)
             } catch (e: S3Exception) {
                 call.respondText("", status = HttpStatusCode.NotFound)
