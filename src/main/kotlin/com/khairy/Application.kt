@@ -19,14 +19,10 @@ fun main() {
         uploadsDir.mkdirs()
     }
 
-    embeddedServer(Netty, port = System.getenv("PORT").toInt()) {
+    embeddedServer(Netty, port = System.getenv("PORT")?.toIntOrNull()?:8080) {
         install(CallLogging)
         install(ContentNegotiation) {
-            json(Json {
-                prettyPrint = true
-                isLenient = true
-                ignoreUnknownKeys = true
-            })
+            json()
         }
         routing {
             route("/s3"){

@@ -1,5 +1,6 @@
 package com.khairy
 
+import com.khairy.models.FlexBook
 import io.ktor.http.content.*
 import io.ktor.http.*
 import io.ktor.server.application.*
@@ -26,6 +27,7 @@ fun Route.uploadEpub() {
                         fileDescription = part.value
                     }
                 }
+
                 is PartData.FileItem -> {
                     fileName = part.originalFileName as String
                     val fileBytes = part.streamProvider().readBytes()
@@ -42,11 +44,15 @@ fun Route.uploadEpub() {
                     // Clean up temporary file
                     tempFile.delete()
                 }
+
                 else -> Unit
             }
             part.dispose()
         }
-        call.respondText("File uploaded successfully: $fileName with description: $fileDescription", status = HttpStatusCode.OK)
+        call.respondText(
+            "File uploaded successfully: $fileName with description: $fileDescription",
+            status = HttpStatusCode.OK
+        )
     }
 }
 
@@ -78,16 +84,17 @@ fun Route.getEpub() {
 
 fun Route.getAllEpub() {
     get("/epub/list") {
-            try {
-                // Retrieve from S3
-                val getRequest = ListObjectsV2Request.builder()
-                    .bucket(S3Config.BUCKET_NAME)
-                    .build()
-                val listResponse = S3Config.s3Client.listObjectsV2(getRequest)
-                call.respond(listResponse)
-            } catch (e: S3Exception) {
-                call.respondText("", status = HttpStatusCode.NotFound)
-            }
+        try {
+            // Retrieve from S3
+            val getRequest = ListObjectsV2Request.builder()
+                .bucket(S3Config.BUCKET_NAME)
+                .build()
+            val listResponse = S3Config.s3Client.listObjectsV2(getRequest)
+            val books = listResponse.contents().map { FlexBook.from(it) }.toTypedArray()
+            call.respond(books)
+        } catch (e: S3Exception) {
+            call.respondText(e.message ?: e.localizedMessage, status = HttpStatusCode.NotFound)
         }
+    }
 }
 
